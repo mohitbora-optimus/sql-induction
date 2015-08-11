@@ -10,6 +10,26 @@ CREATE TABLE Employee(
 	LastName   VARCHAR(50),
 	Sex		   CHAR,
 	ActiveStatus BIT);
+	
+
+-- INSERTING DATA
+   INSERT INTO Employee
+   VALUES(2,'AJAY','SINGH','M','true');
+   
+   INSERT INTO Employee(EmployeeId,FirstName,Sex,ActiveStatus)
+   VALUES(5,'RAGHAV','M','TRUE');
+
+   INSERT INTO Employee
+   VALUES(3,'AMIT','KOLHI','M','false');
+
+   INSERT INTO Employee
+   VALUES(1,'SUDHIR','SHARMA','M','true');
+
+   INSERT INTO Employee
+   VALUES(4,'ASH','RAI','F','true');
+
+SELECT * FROM Employee ORDER BY EmployeeId;
+
 
 
 CREATE TABLE Account(
@@ -17,6 +37,12 @@ CREATE TABLE Account(
 	Salary DECIMAL(10,2) CHECK (Salary>10000),
 	); 
 	
+
+   INSERT INTO Account
+   VALUES(1,45000.00);
+
+   INSERT INTO Account
+   VALUES(2,35000.00);
 
 -- 7 CONSTRAINTS
 
@@ -57,7 +83,7 @@ ALTER TABLE Employee
 ALTER TABLE Employee
 	ADD DEFAULT 
 
--- DROP TABLE
+-- 14 DROP TABLE
 
 CREATE TABLE Designation(
 	Id INT,
@@ -65,3 +91,186 @@ CREATE TABLE Designation(
 
 DROP TABLE Designation;
 
+-- 15 CREATE INDEX
+
+CREATE UNIQUE INDEX PIndex
+	ON Employee (FirstName, LastName));
+
+-- 16 ALTER TABLE
+
+ALTER TABLE Employee
+	ADD Designation VARCHAR(50); 
+
+ALTER TABLE Employee
+	ALTER COLUMN Designation INT;
+
+CREATE TABLE Designation(
+	Id INT FOREIGN KEY REFERENCES Employee(EmployeeId));
+
+-- 17 IN OPERATION
+
+SELECT * FROM Employee, Account
+ WHERE Employee.EmployeeId = Account.Id AND Salary IN (10000,20000,30000,40000);
+
+-- 18 BETWEEN
+
+SELECT * FROM Employee, Account
+	WHERE Employee.EmployeeId = Account.Id AND Account.Salary BETWEEN 10000 AND 40000; 
+
+-- 19 ALIAS NAME
+
+SELECT EmployeeId Id, FirstName+ ',' +LastName AS Name 
+	 FROM Employee;
+
+-- CREATING SLABS TABLE
+
+ CREATE TABLE Slabs(
+   Id INT,
+   Project VARCHAR(30),
+   Location VARCHAR(30)
+   );
+   
+-- 20, 21 SQL JOINS (INNER JOIN)  
+
+ SELECT EmployeeId, FirstName+LastName AS Name, Sex
+    FROM Employee ,Slabs 
+	WHERE Employee.EmployeeId = Slabs.Id;
+
+-- 22 LEFT JOIN
+
+		-- CREATING SAMPLE EMPLOYEE MANAGEMENT SYSTEM
+
+		       CREATE TABLE Department(
+			   EmployeeId INT,
+			   DepartmentName VARCHAR(30),
+			   Location VARCHAR(30)
+			   );
+
+
+			 INSERT INTO Department
+			 VALUES(2,'SECURITY','DELHI');
+
+			 INSERT INTO Department
+			 VALUES(1,'DEVELOP','MUMBAI');
+
+			 INSERT INTO Department
+			 VALUES(5,'DEVELOP','MUMBAI');
+
+ SELECT * FROM Employee 
+	LEFT JOIN Department ON 
+	Employee.EmployeeId = Department.EmployeeId ; 
+
+-- 23 FULL JOIN
+
+SELECT * FROM Employee
+FULL JOIN Department
+ON Employee.EmployeeId = Department.EmployeeId;
+
+-- 24 UNION
+ 
+  CREATE TABLE EmployeeOfABC(
+	EmployeeId INT,
+	FirstName  VARCHAR(50),
+	LastName   VARCHAR(50),
+	Sex		   CHAR,
+	ActiveStatus BIT);
+
+    INSERT INTO EmployeeOfABC
+   VALUES(2,'AJAY','SINGH','M','true');
+   
+   INSERT INTO EmployeeOfABC
+   VALUES(3,'AMIT','KOLHI','M','FALSE');
+
+   INSERT INTO EmployeeOfABC
+   VALUES(1,'SUDHIR','SHARMA','M','true');
+
+   INSERT INTO EmployeeOfABC
+   VALUES(4,'ASH','RAI','F','true');
+
+   SELECT * FROM EmployeeOfABC; 
+
+	CREATE TABLE EmployeeOfXYZ(
+	EmployeeId INT,
+	FirstName  VARCHAR(50),
+	LastName   VARCHAR(50),
+	Sex		   CHAR,
+	ActiveStatus BIT);
+
+	INSERT INTO EmployeeOfXYZ
+    VALUES(433,'ANJALI','MATHUR','F','FALSE');
+
+    INSERT INTO EmployeeOfXYZ
+    VALUES(431,'PRIYANKA','MALOTHRA','F','TRUE');
+
+    INSERT INTO EmployeeOfXYZ
+    VALUES(430,'ROHIT','MATHUR','M','FALSE');
+
+
+	SELECT * FROM EmployeeOfXYZ;
+
+	CREATE TABLE EmployeeOfLMN(
+	EmployeeId INT,
+	FirstName  VARCHAR(50),
+	LastName   VARCHAR(50),
+	Sex		   CHAR,
+	ActiveStatus BIT);
+
+	INSERT INTO EmployeeOfLMN
+    VALUES(33,'JACK','CHAN','M','FALSE');
+
+	INSERT INTO EmployeeOfLMN
+    VALUES(35,'TIGER','TIGER','M','TRUE');
+
+	SELECT * FROM EmployeeOfLMN;
+
+
+SELECT * FROM EmployeeOfABC
+UNION
+SELECT * FROM EmployeeOfXYZ
+UNION
+SELECT * FROM EmployeeOfLMN;
+
+-- 26 SELECT INTO
+
+SELECT * INTO EmployeeBackUp
+FROM Employee;
+
+	SELECT * FROM EmployeeBackUp;
+
+-- 27 SQL INCREMENT
+
+UPDATE Account
+SET Salary =Salary + 5000;
+
+SELECT * FROM Employee LEFT JOIN Account
+ON Employee.EmployeeID = Account.Id;
+
+-- 28  SQL VIEWS
+
+CREATE VIEW EmployeeView AS 
+SELECT * FROM Employee, Account
+WHERE Account.Salary >=6000 AND Employee.EmployeeId = Account.Id;
+
+SELECT * FROM EmployeeView;
+
+ALTER TABLE Employee 
+ADD DateOfJoining DATE;
+
+-- 29 DATE
+SELECT format(getdate(),'ddd')+' '+format(getdate(),'dd')+'th'+' '+format(getdate(),'mmm')+' '+format(getdate(),'yy')+', '+format(getdate(),'hh:ss tt');
+
+SELECT format(getdate()+2,'ddd')+' '+format(getdate()+2,'dd')+'th'+' '+format(getdate(),'mmm')+' '+format(getdate(),'yy')+', '+format(getdate(),'hh:ss tt');
+
+-- 30 null
+
+SELECT COUNT(*) FROM Employee WHERE COL IS NULL;
+
+-- 31 ISNULL()
+
+SELECT * FROM Employee
+WHERE LastName IS NULL;
+
+-- 32 DATA TYPES
+ SELECT cast(0.125*Salary AS decimal(36,2)) as PF FROM Account;
+
+ 
