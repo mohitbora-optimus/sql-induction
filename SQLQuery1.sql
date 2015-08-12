@@ -4,15 +4,21 @@ CREATE DATABASE Company;
 
 -- 6 CREATE TABLE Employee
 
-CREATE TABLE Employee(
-	EmployeeId INT,
-	FirstName  VARCHAR(50),
-	LastName   VARCHAR(50),
-	Sex		   CHAR,
-	ActiveStatus BIT);
+USE Company;
+GO
+
+CREATE TABLE Employee
+	(
+		EmployeeId INT,
+		FirstName  VARCHAR(50),
+		LastName   VARCHAR(50),
+		Sex		   CHAR,
+		ActiveStatus BIT
+	); 
 	
 
 -- INSERTING DATA
+
    INSERT INTO Employee
    VALUES(2,'AJAY','SINGH','M','true');
    
@@ -28,13 +34,14 @@ CREATE TABLE Employee(
    INSERT INTO Employee
    VALUES(4,'ASH','RAI','F','true');
 
-SELECT * FROM Employee ORDER BY EmployeeId;
+   SELECT * FROM Employee ORDER BY EmployeeId;
 
 
 
-CREATE TABLE Account(
-	Id INT PRIMARY KEY,
-	Salary DECIMAL(10,2) CHECK (Salary>10000),
+	CREATE TABLE Account
+	(
+		Id INT PRIMARY KEY,
+		Salary DECIMAL(10,2) CHECK (Salary>10000),
 	); 
 	
 
@@ -46,104 +53,126 @@ CREATE TABLE Account(
 
 -- 7 CONSTRAINTS
 
-CREATE TABLE Employee(
-    EmployeeId INT PRIMARY KEY,
-	FirstName  VARCHAR(50) NOT NULL,
-	LastName   VARCHAR(50) UNIQUE,
-	Sex		   CHAR,
-	ActiveStatus BIT DEFAULT 0);	
+	CREATE TABLE Employee
+	(
+		EmployeeId INT PRIMARY KEY,
+		FirstName  VARCHAR(50) NOT NULL,
+		LastName   VARCHAR(50) UNIQUE,
+		Sex		   CHAR,
+		ActiveStatus BIT DEFAULT 0
+	);	
 
 -- 8 NOT NULL	
 	
-ALTER TABLE Employee 
-	 ALTER COLUMN Sex BIT NOT NULL;
+	ALTER TABLE Employee 
+		ALTER COLUMN Sex BIT NOT NULL;
 
 -- 9 UNIQUE
 
-ALTER TABLE Employee
-	ADD UNIQUE(EmployeeId);
+	ALTER TABLE Employee
+		ADD UNIQUE(EmployeeId);
 
 -- 10 PRIMARY KEY
 
-ALTER TABLE Employee
-	ADD PRIMARY KEY(EmployeeID);
+	ALTER TABLE Employee
+		ADD PRIMARY KEY(EmployeeID);
 
 -- 11 FOREIGN KEY
 
-ALTER TABLE Account
-	ADD FOREIGN KEY(Id) REFERENCES Employee(EmployeeId);
+	ALTER TABLE Account
+		ADD FOREIGN KEY(Id) REFERENCES Employee(EmployeeId);
 
 -- 12 CHECK
 
-ALTER TABLE Employee
-	ADD CHECK(EmployeeId>0);
+	ALTER TABLE Employee
+		ADD CHECK(EmployeeId>0);
 
 -- 13 DEFAULT
 
-ALTER TABLE Employee
-	ADD DEFAULT 
+	ALTER TABLE Employee
+		ADD DEFAULT 
 
 -- 14 DROP TABLE
 
-CREATE TABLE Designation(
-	Id INT,
-	Position VARCHAR(50));
+	CREATE TABLE Designation
+	(
+		Id INT,
+		Position VARCHAR(50)
+	);
 
-DROP TABLE Designation;
+	DROP TABLE Designation;
 
 -- 15 CREATE INDEX
 
-CREATE UNIQUE INDEX PIndex
-	ON Employee (FirstName, LastName));
+	CREATE UNIQUE INDEX PIndex
+		ON Employee (FirstName, LastName));
 
 -- 16 ALTER TABLE
 
-ALTER TABLE Employee
-	ADD Designation VARCHAR(50); 
+	ALTER TABLE Employee
+		ADD Designation VARCHAR(50); 
 
-ALTER TABLE Employee
-	ALTER COLUMN Designation INT;
+	ALTER TABLE Employee
+		ALTER COLUMN Designation INT;
 
-CREATE TABLE Designation(
-	Id INT FOREIGN KEY REFERENCES Employee(EmployeeId));
+	CREATE TABLE Designation
+	(
+	Id INT FOREIGN KEY REFERENCES Employee(EmployeeId)
+	);
 
 -- 17 IN OPERATION
 
-SELECT * FROM Employee, Account
- WHERE Employee.EmployeeId = Account.Id AND Salary IN (10000,20000,30000,40000);
+	SELECT * 
+		FROM 
+			Employee, Account
+		WHERE 
+			Employee.EmployeeId = Account.Id 
+				AND 
+			Salary IN (10000,20000,30000,40000);
 
 -- 18 BETWEEN
 
-SELECT * FROM Employee, Account
-	WHERE Employee.EmployeeId = Account.Id AND Account.Salary BETWEEN 10000 AND 40000; 
+	SELECT * 
+		FROM 
+			Employee, Account
+		WHERE 
+			Employee.EmployeeId = Account.Id 
+			AND 
+			Account.Salary BETWEEN 10000 AND 40000; 
 
 -- 19 ALIAS NAME
 
-SELECT EmployeeId Id, FirstName+ ',' +LastName AS Name 
-	 FROM Employee;
+	SELECT 
+		EmployeeId Id, FirstName+ ',' +LastName AS Name 
+	FROM Employee;
 
 -- CREATING SLABS TABLE
 
- CREATE TABLE Slabs(
-   Id INT,
-   Project VARCHAR(30),
-   Location VARCHAR(30)
+	CREATE TABLE Slabs
+	(
+	 Id INT,
+	 Project VARCHAR(30),
+	 Location VARCHAR(30)
    );
    
 -- 20, 21 SQL JOINS (INNER JOIN)  
 
- SELECT EmployeeId, FirstName+LastName AS Name, Sex
-    FROM Employee ,Slabs 
-	WHERE Employee.EmployeeId = Slabs.Id;
+	SELECT 
+		EmployeeId, FirstName+LastName AS Name, Sex
+    FROM 
+		Employee ,Slabs 
+	WHERE 
+		Employee.EmployeeId = Slabs.Id;
 
 -- 22 LEFT JOIN
 
 		-- CREATING SAMPLE EMPLOYEE MANAGEMENT SYSTEM
 
-		       CREATE TABLE Department(
-			   EmployeeId INT,
-			   DepartmentName VARCHAR(30),
-			   Location VARCHAR(30)
+		       CREATE TABLE Department
+			   (
+				 EmployeeId INT,
+				 DepartmentName VARCHAR(30),
+				 Location VARCHAR(30)
 			   );
 
 
@@ -156,26 +185,33 @@ SELECT EmployeeId Id, FirstName+ ',' +LastName AS Name
 			 INSERT INTO Department
 			 VALUES(5,'DEVELOP','MUMBAI');
 
- SELECT * FROM Employee 
-	LEFT JOIN Department ON 
-	Employee.EmployeeId = Department.EmployeeId ; 
+	SELECT * 
+		FROM Employee 
+			LEFT JOIN Department ON 
+			Employee.EmployeeId = Department.EmployeeId ; 
 
 -- 23 FULL JOIN
 
-SELECT * FROM Employee
-FULL JOIN Department
-ON Employee.EmployeeId = Department.EmployeeId;
+		SELECT * 
+		FROM 
+			Employee
+		FULL JOIN
+			Department
+		ON 
+			Employee.EmployeeId = Department.EmployeeId;
 
 -- 24 UNION
  
-  CREATE TABLE EmployeeOfABC(
-	EmployeeId INT,
-	FirstName  VARCHAR(50),
-	LastName   VARCHAR(50),
-	Sex		   CHAR,
-	ActiveStatus BIT);
+	CREATE TABLE EmployeeOfABC
+	(
+		EmployeeId INT,
+		FirstName  VARCHAR(50),
+		LastName   VARCHAR(50),
+		Sex		   CHAR,
+		ActiveStatus BIT
+	);
 
-    INSERT INTO EmployeeOfABC
+   INSERT INTO EmployeeOfABC
    VALUES(2,'AJAY','SINGH','M','true');
    
    INSERT INTO EmployeeOfABC
@@ -189,12 +225,14 @@ ON Employee.EmployeeId = Department.EmployeeId;
 
    SELECT * FROM EmployeeOfABC; 
 
-	CREATE TABLE EmployeeOfXYZ(
-	EmployeeId INT,
-	FirstName  VARCHAR(50),
-	LastName   VARCHAR(50),
-	Sex		   CHAR,
-	ActiveStatus BIT);
+	CREATE TABLE EmployeeOfXYZ
+	(
+		EmployeeId INT,
+		FirstName  VARCHAR(50),
+		LastName   VARCHAR(50),
+		Sex		   CHAR,
+		ActiveStatus BIT
+	);
 
 	INSERT INTO EmployeeOfXYZ
     VALUES(433,'ANJALI','MATHUR','F','FALSE');
@@ -208,12 +246,14 @@ ON Employee.EmployeeId = Department.EmployeeId;
 
 	SELECT * FROM EmployeeOfXYZ;
 
-	CREATE TABLE EmployeeOfLMN(
-	EmployeeId INT,
-	FirstName  VARCHAR(50),
-	LastName   VARCHAR(50),
-	Sex		   CHAR,
-	ActiveStatus BIT);
+	CREATE TABLE EmployeeOfLMN
+	(
+		EmployeeId INT,
+		FirstName  VARCHAR(50),
+		LastName   VARCHAR(50),
+		Sex		   CHAR,
+		ActiveStatus BIT
+	);
 
 	INSERT INTO EmployeeOfLMN
     VALUES(33,'JACK','CHAN','M','FALSE');
@@ -224,53 +264,101 @@ ON Employee.EmployeeId = Department.EmployeeId;
 	SELECT * FROM EmployeeOfLMN;
 
 
-SELECT * FROM EmployeeOfABC
-UNION
-SELECT * FROM EmployeeOfXYZ
-UNION
-SELECT * FROM EmployeeOfLMN;
+	SELECT * FROM EmployeeOfABC
+		UNION
+	SELECT * FROM EmployeeOfXYZ
+		UNION
+	SELECT * FROM EmployeeOfLMN;
 
 -- 26 SELECT INTO
 
-SELECT * INTO EmployeeBackUp
-FROM Employee;
+		SELECT * 
+			INTO 
+				EmployeeBackUp
+			FROM 
+				Employee;
 
 	SELECT * FROM EmployeeBackUp;
 
 -- 27 SQL INCREMENT
 
-UPDATE Account
-SET Salary =Salary + 5000;
+	UPDATE 
+		Account
+	SET 
+		Salary =Salary + 5000;
 
-SELECT * FROM Employee LEFT JOIN Account
-ON Employee.EmployeeID = Account.Id;
+	SELECT *
+	FROM 
+		Employee LEFT JOIN Account
+	ON 
+		Employee.EmployeeID = Account.Id;
 
 -- 28  SQL VIEWS
 
-CREATE VIEW EmployeeView AS 
-SELECT * FROM Employee, Account
-WHERE Account.Salary >=6000 AND Employee.EmployeeId = Account.Id;
+	CREATE VIEW EmployeeView 
+	AS 
+		SELECT * FROM Employee, Account
+		WHERE
+			 Account.Salary >=6000 
+				AND 
+			Employee.EmployeeId = Account.Id;
 
 SELECT * FROM EmployeeView;
 
-ALTER TABLE Employee 
-ADD DateOfJoining DATE;
+	ALTER TABLE Employee 
+		ADD DateOfJoining DATE;
 
 -- 29 DATE
-SELECT format(getdate(),'ddd')+' '+format(getdate(),'dd')+'th'+' '+format(getdate(),'mmm')+' '+format(getdate(),'yy')+', '+format(getdate(),'hh:ss tt');
+	SELECT 
+		concat
+		(
+			   format(getdate(),'ddd'),
+			   ' ',
+			   format(getdate(),'dd'),
+			   'th',
+			   ' ',
+			   format(getdate(),'mmm'),
+			   ' ',
+			   format(getdate(),'yy'),
+			   ', ',
+			   format(getdate(),
+			   'hh:ss tt')
+		);
 
-SELECT format(getdate()+2,'ddd')+' '+format(getdate()+2,'dd')+'th'+' '+format(getdate(),'mmm')+' '+format(getdate(),'yy')+', '+format(getdate(),'hh:ss tt');
+	SELECT 
+		format(getdate()+2,'ddd')+
+		' '+
+		format(getdate()+2,'dd')+
+		'th'+
+		' '+
+		format(getdate(),'mmm')+
+		' '+
+		format(getdate(),'yy')+
+		', '+
+		format(getdate(),'hh:ss tt');
 
 -- 30 null
 
-SELECT COUNT(*) FROM Employee WHERE COL IS NULL;
+	SELECT COUNT(*) 
+	FROM 
+		Employee 
+	WHERE 
+		COL IS NULL;
 
 -- 31 ISNULL()
 
-SELECT * FROM Employee
-WHERE LastName IS NULL;
+	SELECT * 
+		FROM Employee
+	WHERE 
+		LastName IS NULL;
 
 -- 32 DATA TYPES
- SELECT cast(0.125*Salary AS decimal(36,2)) as PF FROM Account;
+	
+	SELECT 
+		cast(0.125*Salary AS decimal(36,2)) 
+		AS
+			 PF 
+		FROM 
+			Account;
 
  
