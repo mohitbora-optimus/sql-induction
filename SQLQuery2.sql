@@ -210,7 +210,66 @@ select * from Employee;
 		FROM ( SELECT Salary, Dense_rank() over (Order by Salary) as DENSERANK FROM Account) Result
 		where DENSERANK IN (1,2,3,4,5);
 		
------ 50 		
+---- 50 Common Expression Table(CTE)
+
 		
-		
-		   
+---- 51 WITH CUBE and ROLLUP
+
+		SELECT 
+			DepartmentName, DepartmentLocation, SUM(Salary) as salary
+		FROM
+			Employee, Account, Department
+		WHERE 
+			Department.DepartmentId = Employee.DepartmentId
+			 AND
+			Employee.EmployeeId = Account.Id
+		GROUP BY 
+			DepartmentName, DepartmentLocation
+		WITH CUBE;
+	      			
+	SELECT 
+			DepartmentName, DepartmentLocation, SUM(Salary) as salary
+		FROM
+			Employee, Account, Department
+		WHERE 
+			Department.DepartmentId = Employee.DepartmentId
+			 AND
+			Employee.EmployeeId = Account.Id
+		GROUP BY 
+			DepartmentName, DepartmentLocation
+		WITH ROLLUP;
+	
+--- 52 EXCEPT AND INTERSECT	
+   
+    SELECT * FROM Account
+	   EXCEPT
+	SELECT * FROM Account WHERE Exprience >=6
+
+  
+   SELECT * FROM Account
+		INTERSECT
+   SELECT * FROM Account WHERE Exprience <6;
+
+
+--- 53 CORELATED QURIES
+
+   SELECT FirstName+' '+LastName AS Name, Salary 
+    FROM Employee, Account 
+		where 
+			EmployeeId = Account.Id
+			 AND 
+			Account.Salary 
+			IN
+			(
+				 SELECT DISTINCT TOP 3 Salary
+					FROM 
+						Account
+			); 
+
+---- 54 RUNNING AGGREGATE 
+
+	SELECT Id, 
+	( SELECT SUM(Salary) FROM Account q WHERE p.Id >= q.Id )
+	FROM Account p ORDER BY Id;
+
+	
