@@ -209,10 +209,29 @@ select * from Employee;
 		SELECT DISTINCT Salary
 		FROM ( SELECT Salary, Dense_rank() over (Order by Salary) as DENSERANK FROM Account) Result
 		where DENSERANK IN (1,2,3,4,5);
-		
+
+		SELECT TOP 5 ROW_NUMBER() OVER(ORDER BY SALARY) AS R, Salary
+	 	FROM Account; 	
+
+		SELECT NTILE(2) OVER( ORDER BY Salary) AS NtileNumber,
+			   Salary
+		FROM Account;
+
 ---- 50 Common Expression Table(CTE)
 
-		
+		WITH CTE_Employee (EmployeeId)
+		AS
+		(
+		  SELECT EmployeeId 
+		  FROM EMPLOYEE
+		  WHERE EmployeeId IN (1,2)
+		)
+		SELECT * FROM Employee
+		WHERE EmployeeId = CTE_Employee.EmployeeId
+		ORDER BY EmployeeId;
+
+
+
 ---- 51 WITH CUBE and ROLLUP
 
 		SELECT 
