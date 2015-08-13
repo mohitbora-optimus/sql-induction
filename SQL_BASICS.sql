@@ -170,25 +170,25 @@ CREATE TABLE Employee
 
 		       CREATE TABLE Department
 			   (
-				 EmployeeId INT,
+				 DepartmentId INT,
 				 DepartmentName VARCHAR(30),
 				 Location VARCHAR(30)
 			   );
 
+			   SELECT * FROM Department
+			 INSERT INTO Department
+			 VALUES(1001,'SECURITY','DELHI');
 
 			 INSERT INTO Department
-			 VALUES(2,'SECURITY','DELHI');
+			 VALUES(1002,'DEVELOP','MUMBAI');
 
 			 INSERT INTO Department
-			 VALUES(1,'DEVELOP','MUMBAI');
-
-			 INSERT INTO Department
-			 VALUES(5,'DEVELOP','MUMBAI');
+			 VALUES(1003,'DEVELOP','MUMBAI');
 
 	SELECT * 
 		FROM Employee 
 			LEFT JOIN Department ON 
-			Employee.EmployeeId = Department.EmployeeId ; 
+			Employee.DepartmentId = Department.DepartmentId ; 
 
 -- 23 FULL JOIN
 

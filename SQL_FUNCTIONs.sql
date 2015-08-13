@@ -39,6 +39,7 @@ use Company;
 	select * from Employee;
 	select * from Department;
 
+	
 	SELECT 
 		DepartmentName, COUNT(EmployeeId) as NumberOfEmployee
 	FROM
@@ -47,6 +48,16 @@ use Company;
 		Department.DepartmentId = Employee.DepartmentId 
 	GROUP BY
 		DepartmentName;
+
+		
+	SELECT 
+		Employee.DepartmentId, COUNT(EmployeeId) as NumberOfEmployee
+	FROM
+		Department, Employee
+	WHERE
+		Department.DepartmentId = Employee.DepartmentId 
+	GROUP BY
+		Employee.DepartmentId;
 
 
 ---- 36 MAX()
@@ -76,7 +87,7 @@ use Company;
 
 ---- 38 SUM()
 
-	SELECT sum(Salary) FROM Account;
+	SELECT sum(Salary) [SUM] FROM Account;
 
 ---- 39 GROUP BY
 
