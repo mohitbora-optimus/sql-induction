@@ -1,0 +1,129 @@
+
+------- ASSIGNMENT
+
+-- Product Table
+
+create database assignment
+use assignment
+ CREATE TABLE t_product_master
+ (
+   Product_ID varchar(10),
+   Product_Name	varchar(30),
+   Cost_Per_Item	int
+ );
+
+
+ INSERT INTO t_product_master
+ VALUES( 'P1', 'Pen', 10);
+
+ INSERT INTO t_product_master
+ VALUES('P2', 'Scale', 15);
+
+ INSERT INTO t_product_master
+ VALUES('P3', 'Note Book', 25);
+
+ SELECT * FROM t_product_master;
+
+
+ -- USER TABLE
+
+ CREATE TABLE t_user_master
+ (
+  [User_ID]	VARCHAR(10),
+  [User_Name]	VARCHAR(30)
+ );
+  
+  INSERT INTO t_user_master
+  VALUES('U1', 'Alfred Lawrence');
+
+  INSERT INTO t_user_master
+  VALUES('U2', 'William Paul');
+  
+  INSERT INTO t_user_master
+  VALUES('U3', 'Edward Fillip');
+
+  SELECT * FROM t_user_master;
+
+
+  -- TRANSACTION TABLE
+
+
+  CREATE TABLE t_transaction
+  ( 
+    [User_ID]	VARCHAR(10),
+	Product_ID	VARCHAR(30),
+	Transaction_Date	DATE,
+	Transaction_Type	VARCHAR(30),
+	Transaction_Amount		int
+  );
+  
+
+  INSERT INTO t_transaction
+  VALUES('U1', 'P1', '10-25-2010', 'Order', 150);
+
+  INSERT INTO t_transaction
+  VALUES('U1', 'P1', '11-20-2010', 'Payment', 750);
+
+  INSERT INTO t_transaction
+  VALUES('U1', 'P1', '11-20-2010', 'Order', 200);
+
+  INSERT INTO t_transaction
+  VALUES('U1', 'P3', '11-25-2010', 'Order', 50);
+
+  INSERT INTO t_transaction
+  VALUES('U3', 'P2', '11-26-2010', 'Order', 100);
+
+  INSERT INTO t_transaction
+  VALUES('U2', 'P1', '12-15-2010', 'Order', 75);
+
+  INSERT INTO t_transaction
+  VALUES('U3', 'P2', '01-15-2010', 'Payment', 250);
+
+
+  SELECT * FROM t_user_master;
+
+  SELECT * FROM t_product_master;
+
+  SELECT [User_ID], Product_ID, format(Transaction_Date,'dd-MM-yyyy') AS Trnsaction_Date, Transaction_Type, Transaction_Amount
+  FROM t_transaction;
+
+
+
+	-- Target SQL Querie
+
+SELECT 
+	max([User_Name]) AS User_Name, 
+	max(Product_Name) AS Product_ID, 
+	SUM(CASE
+			WHEN Transaction_Type = 'Order'
+				THEN Transaction_Amount
+			ELSE
+				0
+		END) 
+	AS Ordered_Quantity,
+	SUM(CASE
+			WHEN Transaction_Type='Payment'
+				THEN Transaction_Amount
+			ELSE
+				0
+			END
+		) 
+	AS Amount_Paid,
+	FORMAT(MAX(Transaction_Date),'dd-MM-yyyy') AS last_Transaction_Date,		 
+	SUM(CASE 
+			WHEN Transaction_Type = 'Order'
+				THEN Transaction_Amount*Cost_Per_Item
+			ELSE  
+				(-1)*Transaction_Amount
+			END
+		)  
+	AS Balance		   
+	FROM 
+		t_product_master, t_user_master, t_transaction
+	WHERE
+		 t_product_master.Product_ID= t_transaction.Product_ID
+		AND
+		t_transaction.[User_ID]=t_user_master.[User_ID]
+	GROUP BY
+		t_transaction.User_ID,
+		t_transaction.Product_ID
