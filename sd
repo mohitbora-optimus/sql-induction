@@ -1,0 +1,182 @@
+	
+	-- ASSIGNMENT 2 SQL INDUCTION
+
+	create database assignment2
+	use assignment2
+
+	-- Employee Master Table
+
+
+	CREATE TABLE t_emp
+	(
+	  Emp_id	int	IDENTITY(1001,2)	PRIMARY KEY NOT NULL,
+	  Emp_Code	varchar(20),
+	  Emp_f_name	varchar(30)	NOT NULL,
+	  Emp_m_name	varchar(30),
+	  Emp_l_nam		varchar(30),
+	  Emp_DOB		DATE check ( datediff(year, Emp_DOB, getdate()) >=18), 
+	  Emp_DOJ		DATE	NOT NULL
+	 );
+
+	 INSERT INTO t_emp(Emp_Code,Emp_f_name, Emp_l_nam,Emp_DOB, Emp_DOJ)
+	 VALUES('OPT2011010','Manmohan','Singh','02-10-1983','05-25-2010');
+
+	 INSERT INTO t_emp(Emp_Code,Emp_f_name,Emp_m_name, Emp_l_nam,Emp_DOB, Emp_DOJ)
+	 VALUES('OPT20100915','Alfred','Joseph','Lawrence','02-28-1988','12-15-2012');
+
+	 SELECT * FROM t_emp;
+
+	 
+	 -- Activity Table
+
+	 CREATE TABLE t_activity
+	( 
+	  Activity_id	INT	PRIMARY KEY,
+	  Activity_description	VARCHAR(20)
+	 );
+	
+   INSERT INTO t_activity
+   VALUES(1, 'Code Analysis');
+   
+   INSERT INTO t_activity
+   VALUES(2, 'Lunch');
+   
+   INSERT INTO t_activity
+   VALUES(3, 'Coding');
+
+	
+   INSERT INTO t_activity
+   VALUES(4, 'Knowledge Transition');
+
+   
+   INSERT INTO t_activity
+   VALUES(5, 'Database');
+
+   SELECT * FROM t_activity
+
+   -- ATTENDENCE TABLE
+
+   CREATE TABLE t_atten_det
+  (
+    Atten_id	INT IDENTITY(1001,1) ,
+	Emp_id		INT FOREIGN KEY REFERENCES  t_emp(Emp_id),
+	Activity_id	INT	FOREIGN KEY REFERENCES	t_activity(Activity_id),
+	Atten_start_datetime	DATETIME,
+	Atten_end_hrs	INT
+   );
+
+   
+	INSERT INTO t_atten_det(Emp_id,Activity_id,Atten_start_datetime,Atten_end_hrs)
+	VALUES(1001,5,'2/13/2011 10:00:00', 2);
+ 
+	INSERT INTO t_atten_det(Emp_id,Activity_id,Atten_start_datetime,Atten_end_hrs)
+	VALUES(1001,1,'1/14/2011 10:00:00', 3);
+
+	INSERT INTO t_atten_det(Emp_id,Activity_id,Atten_start_datetime,Atten_end_hrs)
+	VALUES(1001,3,'1/14/2011 13:00:00', 5);
+
+	INSERT INTO t_atten_det(Emp_id,Activity_id,Atten_start_datetime,Atten_end_hrs)
+	VALUES(1003,5,'2/16/2011 10:00:00', 8);
+
+	INSERT INTO t_atten_det(Emp_id,Activity_id,Atten_start_datetime,Atten_end_hrs)
+	VALUES(1003,5,'2/17/2011 10:00:00', 8);
+
+	INSERT INTO t_atten_det(Emp_id,Activity_id,Atten_start_datetime,Atten_end_hrs)
+	VALUES(1003,5,'2/19/2011 10:00:00', 7);
+
+select * from t_atten_det
+	
+
+	CREATE TABLE t_salary
+   (
+     Salary_id	INT,
+	 Emp_Id	INT,
+	 Changed_date	DATE,
+	 New_Salary	DECIMAL(10,2)
+	);
+
+	INSERT INTO t_salary
+	VALUES(1001,1003,'2/16/2011',20000);
+
+	INSERT INTO t_salary
+	VALUES(1002,1003,'1/05/2011',25000);
+
+	INSERT INTO t_salary
+	VALUES(1003,1001,'2/16/2011',26000);
+
+	SELECT * FROM t_salary
+
+
+-- FIRST QUERY 
+	SELECT CONCAT(Emp_f_name, ISNULL(Emp_m_name,''), Emp_l_nam) AS NAME, Emp_DOB 
+	FROM t_emp
+	WHERE EOMONTH(Emp_DOB) = Emp_DOB;
+
+-- SECOND QUERY
+
+
+	SELECT 
+		max(CONCAT(Emp_f_name,' ', ISNULL(Emp_m_name,''),' ', Emp_l_nam)) AS NAME,
+		CAST(
+		CASE
+		 WHEN MAX(New_Salary) - MIN(New_Salary) = 0
+			THEN 0
+		ELSE
+			1
+		END as bit
+		) AS Increment,
+		min(New_Salary) as [Previous Salary],
+		max(New_Salary) AS [Currenet Salary],			
+		sum(Atten_end_hrs) AS [Hous Spend],
+		max(Activity_description) AS [Last Attented Activity],
+		max(Atten_end_hrs) AS [Hours Spend On Last Activity]		  
+	FROM
+		t_salary JOIN
+		t_emp ON (t_emp.Emp_id = t_salary.Emp_id)
+		JOIN t_atten_det
+		ON (t_emp.Emp_id = t_atten_det.Emp_id)
+		JOIN  t_activity
+		ON
+		(t_atten_det.Activity_id = t_activity.Activity_id)
+	 
+	GROUP BY t_emp.Emp_id
+		
+
+
+	SELECT 
+		max(CONCAT(Emp_f_name,' ', ISNULL(Emp_m_name,''),' ', Emp_l_nam)) AS NAME,
+		CAST(
+		CASE
+		 WHEN MAX(New_Salary) - MIN(New_Salary) = 0
+		ELSE
+			THEN 0
+			1
+		END as bit
+		) AS Increment,
+		CAST(
+		CASE
+		 WHEN MAX(New_Salary) = MIN(New_Salary)	
+		  THEN 	0
+		 ELSE
+			New_Salary
+		 END as int
+		 )
+		 AS [Previous Salary]	, 			
+		max(New_Salary) AS [Currenet Salary],			
+		SUM(Atten_end_hrs) AS [Hous Spend],
+		max(Activity_description) AS [Last Attented Activity],
+		max(Atten_end_hrs) AS [Hours Spend On Last Activity]
+		 
+	FROM
+		t_salary,
+		t_emp,
+		t_activity,
+		t_atten_det
+	WHERE
+		 t_emp.Emp_id = t_salary.Emp_id
+		 AND
+		 t_atten_det.Activity_id = t_activity.Activity_id
+		 AND
+		 t_emp.Emp_id = t_atten_det.Emp_id
+	GROUP BY t_emp.Emp_id, New_Salary
+		

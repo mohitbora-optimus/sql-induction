@@ -1,0 +1,31 @@
+	select * from (SELECT 
+		CONCAT(Emp_f_name,' ', ISNULL(Emp_m_name,''),' ', Emp_l_nam) AS NAME,
+		--CAST(
+		--CASE
+		--	WHEN MAX(New_Salary) - MIN(New_Salary) = 0
+		--	THEN 0
+		--ELSE
+		--	1
+		--END as bit
+		--) AS Increment,
+		Row_Number() over(Partition by t_emp.Emp_id order by new_salary ASC) AS Rank,
+		New_Salary AS [Currenet Salary],			
+		Atten_end_hrs AS [Hous Spend],
+		Activity_description AS [Last Attented Activity],
+		Atten_end_hrs AS [Hours Spend On Last Activity]
+		FROM
+			t_salary JOIN
+			t_emp ON (t_emp.Emp_id = t_salary.Emp_id)
+			JOIN t_atten_det
+			ON (t_emp.Emp_id = t_atten_det.Emp_id)
+			JOIN  t_activity
+			ON
+			(t_atten_det.Activity_id = t_activity.Activity_id) ) as a where a.Rank = 2
+		--GROUP BY
+			--t_emp.Emp_id,sal
+
+	--select sum(Atten_end_hrs)
+	--from
+	--t_atten_det
+	--group by Emp_id
+	
