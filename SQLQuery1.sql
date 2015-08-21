@@ -1,5 +1,4 @@
-	
-	-- ASSIGNMENT 2 SQL INDUCTION
+-- ASSIGNMENT 2 SQL INDUCTION
 
 	create database assignment2
 	use assignment2
@@ -107,76 +106,102 @@ select * from t_atten_det
 	SELECT * FROM t_salary
 
 
--- FIRST QUERY 
-	SELECT CONCAT(Emp_f_name, ISNULL(Emp_m_name,''), Emp_l_nam) AS NAME, Emp_DOB 
-	FROM t_emp
-	WHERE EOMONTH(Emp_DOB) = Emp_DOB;
+-- first query
 
--- SECOND QUERY
+	SELECT CONCAT(Emp_f_name, ' ', ISNULL(Emp_m_name, ' '), Emp_l_nam) AS Name, Emp_DOB 
+	FROM t_emp WHERE Emp_DOB = EOMONTH(Emp_DOB);
 
+-- Second Query
 
-	SELECT 
-		max(CONCAT(Emp_f_name,' ', ISNULL(Emp_m_name,''),' ', Emp_l_nam)) AS NAME,
-		CAST(
-		CASE
-		 WHEN MAX(New_Salary) - MIN(New_Salary) = 0
-			THEN 0
-		ELSE
-			1
-		END as bit
-		) AS Increment,
-		min(New_Salary) as [Previous Salary],
-		max(New_Salary) AS [Currenet Salary],			
-		sum(Atten_end_hrs) AS [Hous Spend],
-		max(Activity_description) AS [Last Attented Activity],
-		max(Atten_end_hrs) AS [Hours Spend On Last Activity]		  
-	FROM
-		t_salary JOIN
-		t_emp ON (t_emp.Emp_id = t_salary.Emp_id)
-		JOIN t_atten_det
-		ON (t_emp.Emp_id = t_atten_det.Emp_id)
-		JOIN  t_activity
-		ON
-		(t_atten_det.Activity_id = t_activity.Activity_id)
-	 
-	GROUP BY t_emp.Emp_id
+	  	------------------------------------------------
 		
+		SELECT CONCAT(Emp_f_name, ' ', ISNULL(Emp_m_name, ' '),' ', Emp_l_nam) AS Name, t_emp.Emp_id, 
+	cast(
+	  CASE 
+	  WHEN [Previous Salary] =  [Present salary] 
+		THEN 0
+	   ELSE 
+	     [Previous Salary]
+	END
+		AS INT)  
+		AS [Previous Salary],
+		 [Present salary],
+		 [Total Worked Hour],
+		 [Last Activity Worked],
+		 [Hours Worked in that]
+		FROM  t_emp join
+		(SELECT Emp_id,Activity_description AS [Last Activity Worked],Atten_end_hrs AS [Hours Worked in that]
+	FROM t_activity,
+	(	
+	  SELECT Emp_id , Activity_id, Atten_end_hrs
+	  FROM (SELECT Emp_id,max( Atten_start_datetime) AS [date]
+	  FROM t_atten_det
+	   GROUP BY t_atten_det.Emp_id) AS a
+	  join 
+	  ( SELECT Activity_id, Atten_start_datetime, Atten_end_hrs
+	    FROM t_atten_det
+		) AS b
+	  ON b.Atten_start_datetime = a.[date]
+	) AS k  
+	WHERE t_activity.Activity_id = k.Activity_id
+	) AS p
+	 ON 
+	( p.Emp_id = t_emp.Emp_id)
+	  join
 
-
+		( SELECT  
+			t_emp.Emp_id AS ID, 
+			SUM(Atten_end_hrs) AS [Total Worked Hour]
+		  FROM
+			 t_atten_det 
+			JOIN
+			t_emp
+		  ON
+			t_emp.Emp_id = t_atten_det.Emp_id
+		GROUP BY t_emp.Emp_id
+		)As V 
+	ON V.ID = p.Emp_id,
+		(
 	SELECT 
-		max(CONCAT(Emp_f_name,' ', ISNULL(Emp_m_name,''),' ', Emp_l_nam)) AS NAME,
-		CAST(
-		CASE
-		 WHEN MAX(New_Salary) - MIN(New_Salary) = 0
-		ELSE
-			THEN 0
-			1
-		END as bit
-		) AS Increment,
-		CAST(
-		CASE
-		 WHEN MAX(New_Salary) = MIN(New_Salary)	
-		  THEN 	0
-		 ELSE
-			New_Salary
-		 END as int
+		-- 
+		t_emp.Emp_Id, min([Previous Salary]) AS [Previous Salary], max([Present salary]) AS [Present salary] 
+		FROM
+		 t_emp 
+	 JOIN
+		
+		( SELECT 
+				t_salary.Emp_Id AS Emp_id,
+				New_Salary AS [Present salary], 
+				RANK() OVER(PARTITION BY t_salary.Emp_Id ORDER BY New_Salary DESC) AS ID
+			FROM 
+				t_salary
+			 JOIN
+				t_emp
+			ON	
+				t_emp.Emp_id = t_salary.Emp_Id
+		) AS U
+	ON (t_emp.Emp_id = U.Emp_id)
+	JOIN
+		(SELECT 
+			t_emp.Emp_Id as Emp_Id, 
+			New_Salary AS [Previous Salary],
+			RANK() OVER(PARTITION BY t_salary.Emp_Id ORDER BY New_Salary DESC) AS ID
+		 FROM 
+			t_salary
+			 JOIN
+			t_emp
+		 ON	
+			t_emp.Emp_id = t_salary.Emp_Id
 		 )
-		 AS [Previous Salary]	, 			
-		max(New_Salary) AS [Currenet Salary],			
-		SUM(Atten_end_hrs) AS [Hous Spend],
-		max(Activity_description) AS [Last Attented Activity],
-		max(Atten_end_hrs) AS [Hours Spend On Last Activity]
-		 
-	FROM
-		t_salary,
-		t_emp,
-		t_activity,
-		t_atten_det
+	AS t 
+	 ON
+		U.Emp_id = t.Emp_Id
+	WHERE 
+	    U.ID =1
+		OR	
+		t.ID =2
+	GROUP BY t_emp.Emp_id
+	)
+	AS X
 	WHERE
-		 t_emp.Emp_id = t_salary.Emp_id
-		 AND
-		 t_atten_det.Activity_id = t_activity.Activity_id
-		 AND
-		 t_emp.Emp_id = t_atten_det.Emp_id
-	GROUP BY t_emp.Emp_id, New_Salary
-		
+	 X.Emp_id = t_emp.Emp_id						
